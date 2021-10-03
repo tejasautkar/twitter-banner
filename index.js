@@ -104,6 +104,7 @@ const uploadImage = async () => {
     await twitterClient.accountsAndUsers.accountUpdateProfileBanner({
       banner: base64,
     });
+    console.log("Banner uploaded successfully!")
   } catch (error) {
     console.error(`[UploadImage] ${JSON.stringify(error)}`);
     throw error;
