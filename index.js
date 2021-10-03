@@ -33,7 +33,6 @@ export const headerServ = async () => {
     });
     const { users = null } = followerData;
     if (users) {
-      console.log("DATA LEN", users.length);
       const images = ["./assets/banner.png"];
       for (const user of users) {
         const name = `img-${user.id}.png`;
@@ -104,7 +103,7 @@ const uploadImage = async () => {
     await twitterClient.accountsAndUsers.accountUpdateProfileBanner({
       banner: base64,
     });
-    console.log("Banner uploaded successfully!")
+    console.log("Banner uploaded successfully!");
   } catch (error) {
     console.error(`[UploadImage] ${JSON.stringify(error)}`);
     throw error;
