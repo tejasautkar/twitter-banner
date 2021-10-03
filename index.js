@@ -4,7 +4,19 @@ import Jimp from "jimp";
 import dotenv from "dotenv";
 dotenv.config();
 import { TwitterClient } from "twitter-api-client";
+import express from "express";
+import path from "path";
+const __dirname = path.resolve();
+const app = express();
+const port = process.env.PORT;
 
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
+app.listen(port, () => {
+  console.log(`Twitter-header app listening on port ${port}!`);
+  setInterval(async () => {
+    await headerServ();
+  }, 60000);
+});
 const twitterClient = new TwitterClient({
   apiKey: process.env.API_KEY,
   apiSecret: process.env.API_SECRET,
@@ -106,7 +118,3 @@ const deleteImage = async (image) => {
     throw error;
   }
 };
-
-setInterval(async () => {
-  await headerServ();
-}, 60000);
