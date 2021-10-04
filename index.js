@@ -11,11 +11,12 @@ const app = express();
 const port = process.env.PORT;
 
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "/index.html")));
-app.listen(port, () => {
+app.listen(port, async() => {
   console.log(`Twitter-header app listening on port ${port}!`);
   setInterval(async () => {
-    await headerServ();
+    await headerMain();
   }, 60000);
+
 });
 const twitterClient = new TwitterClient({
   apiKey: process.env.API_KEY,
@@ -24,9 +25,9 @@ const twitterClient = new TwitterClient({
   accessTokenSecret: process.env.TOKEN_SECRET,
 });
 
-export const headerServ = async () => {
+export const headerMain = async () => {
   try {
-    console.info("Entered [headerServ]");
+    console.info("Entered [headerMain]");
     const followerData = await twitterClient.accountsAndUsers.followersList({
       screen_name: process.env.TWITTER_HANDLE,
       count: 3,
@@ -34,22 +35,23 @@ export const headerServ = async () => {
     const { users = null } = followerData;
     if (users) {
       const images = ["./assets/banner.png"];
+      const usersArr = [];
       for (const user of users) {
         const name = `img-${user.id}.png`;
         const path = `./assets/${name}`;
         const url = user.profile_image_url_https;
         await downloadImages(url, path);
-        images.push(path);
+        usersArr.push(user.screen_name.trim().substring(0,15));
+        images.push(path);1
       }
-      await concatenateImages(images);
+      await concatenateImages(images, usersArr);
       console.log("Image Uploaded Successfully!");
       await deleteImage(images[1]);
       await deleteImage(images[2]);
       await deleteImage(images[3]);
     }
   } catch (error) {
-    console.error(`[headerServ] - ${JSON.stringify(error)}`);
-    throw error;
+    console.error(`[headerMain] - ${JSON.stringify(error)}`);
   }
 };
 
@@ -70,7 +72,7 @@ const downloadImages = async (url, path) => {
   }
 };
 
-const concatenateImages = async (images = []) => {
+const concatenateImages = async (images = [], userArr = []) => {
   try {
     console.log(images);
     let jimpArr = [];
@@ -80,11 +82,12 @@ const concatenateImages = async (images = []) => {
     }
     const profileImages = [jimpArr[1], jimpArr[2], jimpArr[3]];
     profileImages.forEach((profile) => {
-      profile.resize(70, 70).circle();
+      profile.resize(90, 90).circle();
     });
-    jimpArr[0].composite(jimpArr[1], 1400, 25);
-    jimpArr[0].composite(jimpArr[2], 1400, 105);
-    jimpArr[0].composite(jimpArr[3], 1400, 185);
+    const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+    jimpArr[0].composite(jimpArr[1], 1390, 45).print(font, 1280, 90, userArr[0]);
+    jimpArr[0].composite(jimpArr[2], 1390, 165).print(font, 1280, 200, userArr[1]);
+    jimpArr[0].composite(jimpArr[3], 1390, 285).print(font, 1280, 330, userArr[2]);
     jimpArr[0].write("./assets/new-banner.png", async () => {
       console.log("New banner downloaded successfully");
       return await uploadImage();
