@@ -11,12 +11,11 @@ const app = express();
 const port = process.env.PORT;
 
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "/index.html")));
-app.listen(port, async() => {
+app.listen(port, async () => {
   console.log(`Twitter-header app listening on port ${port}!`);
   setInterval(async () => {
     await headerMain();
   }, 60000);
-
 });
 const twitterClient = new TwitterClient({
   apiKey: process.env.API_KEY,
@@ -41,8 +40,9 @@ export const headerMain = async () => {
         const path = `./assets/${name}`;
         const url = user.profile_image_url_https;
         await downloadImages(url, path);
-        usersArr.push(user.screen_name.trim().substring(0,15));
-        images.push(path);1
+        usersArr.push(user.screen_name.trim().substring(0, 15));
+        images.push(path);
+        1;
       }
       await concatenateImages(images, usersArr);
       console.log("Image Uploaded Successfully!");
@@ -85,9 +85,15 @@ const concatenateImages = async (images = [], userArr = []) => {
       profile.resize(90, 90).circle();
     });
     const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
-    jimpArr[0].composite(jimpArr[1], 1390, 45).print(font, 1280, 90, userArr[0]);
-    jimpArr[0].composite(jimpArr[2], 1390, 165).print(font, 1280, 200, userArr[1]);
-    jimpArr[0].composite(jimpArr[3], 1390, 285).print(font, 1280, 330, userArr[2]);
+    jimpArr[0]
+      .composite(jimpArr[1], 1390, 45)
+      .print(font, 1280, 90, userArr[0]);
+    jimpArr[0]
+      .composite(jimpArr[2], 1390, 165)
+      .print(font, 1280, 200, userArr[1]);
+    jimpArr[0]
+      .composite(jimpArr[3], 1390, 285)
+      .print(font, 1280, 330, userArr[2]);
     jimpArr[0].write("./assets/new-banner.png", async () => {
       console.log("New banner downloaded successfully");
       return await uploadImage();
