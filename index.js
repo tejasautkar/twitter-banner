@@ -84,16 +84,16 @@ const concatenateImages = async (images = [], userArr = []) => {
     profileImages.forEach((profile) => {
       profile.resize(90, 90).circle();
     });
-    const font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+    const font = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE);
     jimpArr[0]
-      .composite(jimpArr[1], 1390, 45)
-      .print(font, 1280, 90, userArr[0]);
+      .composite(jimpArr[1], 1390, 135)
+      .print(font, 1280, 170, userArr[0]);
     jimpArr[0]
-      .composite(jimpArr[2], 1390, 165)
-      .print(font, 1280, 200, userArr[1]);
+      .composite(jimpArr[2], 1390, 255)
+      .print(font, 1280, 300, userArr[1]);
     jimpArr[0]
-      .composite(jimpArr[3], 1390, 285)
-      .print(font, 1280, 330, userArr[2]);
+      .composite(jimpArr[3], 1390, 375)
+      .print(font, 1280, 410, userArr[2]);
     jimpArr[0].write("./assets/new-banner.png", async () => {
       console.log("New banner downloaded successfully");
       return await uploadImage();
